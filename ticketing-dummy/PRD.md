@@ -56,14 +56,6 @@
 
 ## 5. Konfigurasi Lingkungan Kerja (.env)
 
-Buka dashboard Midtrans Anda, pastikan posisinya di **Sandbox Mode** (bukan Production), lalu ambil *Access Keys* di menu *Settings*. Masukkan ke `.env` Laravel:
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=ticketing_dummy
-DB_USERNAME=root
-DB_PASSWORD=
+Buka dashboard Midtrans Anda, pastikan posisinya di **Sandbox Mode** (bukan Production), lalu ambil *Access Keys* di menu *Settings*.
 
 # Kredensial Midtrans Sandbox Anda
