@@ -11,20 +11,20 @@
         </div>
 
         <h1 class="result-title">E-Tiket Diterbitkan!</h1>
-        <p class="result-subtitle">Pembayaran Anda telah diverifikasi oleh sistem secara otomatis.</p>
+        <p class="result-subtitle">Pembayaran Anda telah sukses diverifikasi oleh sistem Midtrans.</p>
 
         <div class="result-ticket-details">
             <div class="result-detail-row">
-                <span class="result-detail-label">Nomor Invoice</span>
-                <span class="result-detail-val" style="color: var(--accent);">{{ $booking->invoice_number }}</span>
+                <span class="result-detail-label">Order ID</span>
+                <span class="result-detail-val" style="color: var(--accent); font-weight: 700;">{{ $booking->order_id }}</span>
             </div>
             <div class="result-detail-row">
-                <span class="result-detail-label">DOKU Trans ID</span>
-                <span class="result-detail-val" style="font-family: monospace; font-size: 0.85rem;">{{ $booking->doku_trans_id }}</span>
+                <span class="result-detail-label">Midtrans Trans ID</span>
+                <span class="result-detail-val" style="font-family: monospace; font-size: 0.82rem;">{{ $booking->midtrans_trans_id }}</span>
             </div>
             <div class="result-detail-row">
                 <span class="result-detail-label">Event</span>
-                <span class="result-detail-val">{{ $booking->event->title }}</span>
+                <span class="result-detail-val" style="font-weight: 600;">{{ $booking->event->title }}</span>
             </div>
             <div class="result-detail-row">
                 <span class="result-detail-label">Waktu Event</span>
@@ -35,7 +35,7 @@
                 <span class="result-detail-val">{{ $booking->customer_name }}</span>
             </div>
             <div class="result-detail-row">
-                <span class="result-detail-label">Email / WhatsApp</span>
+                <span class="result-detail-label">Email / Nomor HP</span>
                 <span class="result-detail-val">{{ $booking->customer_email }} / {{ $booking->customer_phone }}</span>
             </div>
             <div class="result-detail-row">
@@ -44,12 +44,12 @@
             </div>
             <div class="result-detail-row">
                 <span class="result-detail-label">Total Pembayaran</span>
-                <span class="result-detail-val" style="color: var(--success);">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
+                <span class="result-detail-val" style="color: var(--success); font-weight: 700;">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
             </div>
 
             <div class="ticket-divider"></div>
 
-            <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; font-weight: 600;">
+            <p style="text-align: center; font-size: 0.8rem; color: #64748b; margin-bottom: 12px; font-weight: 600;">
                 Tunjukkan QR Code ini di Loket Masuk:
             </p>
 
@@ -58,38 +58,38 @@
                     <!-- Clean SVG mock QR Code -->
                     <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; display: block;">
                         <!-- Border and positioning marks -->
-                        <rect x="0" y="0" width="25" height="25" fill="#0b0f19" />
+                        <rect x="0" y="0" width="25" height="25" fill="#0f172a" />
                         <rect x="3" y="3" width="19" height="19" fill="#fff" />
-                        <rect x="6" y="6" width="13" height="13" fill="#0b0f19" />
+                        <rect x="6" y="6" width="13" height="13" fill="#0f172a" />
                         
-                        <rect x="75" y="0" width="25" height="25" fill="#0b0f19" />
+                        <rect x="75" y="0" width="25" height="25" fill="#0f172a" />
                         <rect x="78" y="3" width="19" height="19" fill="#fff" />
-                        <rect x="81" y="6" width="13" height="13" fill="#0b0f19" />
+                        <rect x="81" y="6" width="13" height="13" fill="#0f172a" />
 
-                        <rect x="0" y="75" width="25" height="25" fill="#0b0f19" />
+                        <rect x="0" y="75" width="25" height="25" fill="#0f172a" />
                         <rect x="3" y="78" width="19" height="19" fill="#fff" />
-                        <rect x="6" y="81" width="13" height="13" fill="#0b0f19" />
+                        <rect x="6" y="81" width="13" height="13" fill="#0f172a" />
 
                         <!-- Mock Data matrix dots -->
-                        <rect x="35" y="5" width="6" height="6" fill="#0b0f19" />
-                        <rect x="45" y="10" width="6" height="12" fill="#0b0f19" />
-                        <rect x="60" y="5" width="10" height="6" fill="#0b0f19" />
-                        <rect x="55" y="15" width="12" height="6" fill="#0b0f19" />
+                        <rect x="35" y="5" width="6" height="6" fill="#0f172a" />
+                        <rect x="45" y="10" width="6" height="12" fill="#0f172a" />
+                        <rect x="60" y="5" width="10" height="6" fill="#0f172a" />
+                        <rect x="55" y="15" width="12" height="6" fill="#0f172a" />
                         
-                        <rect x="5" y="35" width="6" height="6" fill="#0b0f19" />
-                        <rect x="15" y="45" width="12" height="6" fill="#0b0f19" />
-                        <rect x="35" y="35" width="15" height="15" fill="#0b0f19" />
-                        <rect x="60" y="30" width="6" height="12" fill="#0b0f19" />
-                        <rect x="85" y="35" width="10" height="10" fill="#0b0f19" />
+                        <rect x="5" y="35" width="6" height="6" fill="#0f172a" />
+                        <rect x="15" y="45" width="12" height="6" fill="#0f172a" />
+                        <rect x="35" y="35" width="15" height="15" fill="#0f172a" />
+                        <rect x="60" y="30" width="6" height="12" fill="#0f172a" />
+                        <rect x="85" y="35" width="10" height="10" fill="#0f172a" />
 
-                        <rect x="30" y="60" width="12" height="6" fill="#0b0f19" />
-                        <rect x="5" y="65" width="6" height="6" fill="#0b0f19" />
-                        <rect x="50" y="55" width="18" height="18" fill="#0b0f19" />
-                        <rect x="75" y="55" width="6" height="12" fill="#0b0f19" />
+                        <rect x="30" y="60" width="12" height="6" fill="#0f172a" />
+                        <rect x="5" y="65" width="6" height="6" fill="#0f172a" />
+                        <rect x="50" y="55" width="18" height="18" fill="#0f172a" />
+                        <rect x="75" y="55" width="6" height="12" fill="#0f172a" />
                         
-                        <rect x="35" y="80" width="10" height="10" fill="#0b0f19" />
-                        <rect x="80" y="80" width="15" height="6" fill="#0b0f19" />
-                        <rect x="75" y="90" width="6" height="8" fill="#0b0f19" />
+                        <rect x="35" y="80" width="10" height="10" fill="#0f172a" />
+                        <rect x="80" y="80" width="15" height="6" fill="#0f172a" />
+                        <rect x="75" y="90" width="6" height="8" fill="#0f172a" />
                     </svg>
                 </div>
             </div>

@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Booking extends Model
 {
     protected $fillable = [
-        'invoice_number',
-        'doku_trans_id',
+        'order_id',
+        'snap_token',
+        'midtrans_trans_id',
         'event_id',
         'customer_name',
         'customer_email',

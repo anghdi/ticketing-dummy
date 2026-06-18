@@ -1,76 +1,62 @@
-# Product Requirement Document (PRD) - Dummy Ticketing System (Laravel + MySQL + DOKU)
+# Product Requirement Document (PRD) - Dummy Ticketing System (Laravel + MySQL + Midtrans Sandbox CC)
 
 ## 1. Pendahuluan & Informasi Dokumen
-* **Nama Produk:** MiniTick (Website Ticketing Sederhana)
-* **Versi:** 1.2 (Laravel & MySQL Edition)
+* **Nama Produk:** MiniTick (Website Tiketing Sederhana)
+* **Versi:** 1.6 (Midtrans Credit Card Sandbox Edition)
 * **Status:** Ready for Development
-* **Tujuan:** Panduan teknis pembuatan MVP website ticketing menggunakan **Laravel** sebagai backend/frontend framework, **MySQL** sebagai database, dan **DOKU API (Sandbox Mode)** sebagai gerbang pembayaran otomatis.
+* **Tujuan:** Panduan teknis pembuatan prototype website ticketing menggunakan **Laravel**, **MySQL**, dan **Midtrans Snap API (Sandbox Mode)** khusus untuk mensimulasikan alur pembayaran Kartu Kredit internasional (Visa/MasterCard).
 
 ---
 
-## 2. Sasaran Produk & Ruang Lingkup
-* **Otomatisasi Pembayaran:** Mengeliminasi validasi manual dengan memanfaatkan fitur Webhook dari DOKU yang langsung memproses status transaksi di server Laravel.
-* **Efisiensi Database:** Menggunakan MySQL dengan relasi data terstruktur demi menjaga konsistensi kuota tiket saat transaksi berhasil.
-* **Sederhana:** Tidak memakai sistem registrasi user (pembelian langsung/guest checkout) untuk mempercepat proses *development*.
+## 2. Sasaran Produk & Ruang Lingkup (Scope)
+* **Simulasi Pembayaran Global:** Menggunakan fitur Kartu Kredit pada Midtrans Snap untuk menerima pembayaran simulasi dengan logo Visa/MasterCard.
+* **Otomatisasi Status:** Memanfaatkan *HTTP Notification (Webhook)* dari Midtrans Sandbox ke Laravel untuk mengubah status pesanan secara otomatis di database MySQL setelah otentikasi kartu berhasil.
+* **Pembatasan MVP:** Sistem bersifat *Guest Checkout* (tanpa login akun) dan *Free Seating* (tidak ada pemilihan nomor kursi).
 
 ---
 
-## 3. Alur Pengguna & Sistem (User & System Flow)
-1. **User** memilih event di halaman utama (Blade View).
-2. **User** mengisi form data diri dan klik "Bayar Sekarang".
-3. **Laravel Controller** menangkap request, lalu:
-   * Menggenerasi *Signature* keamanan sesuai standar DOKU.
-   * Melakukan HTTP Request (`Http::withHeaders()->post()`) ke API DOKU Checkout.
-   * Menyimpan data pemesanan awal ke database MySQL dengan status `PENDING`.
-4. **User** dialihkan (*redirect*) ke halaman DOKU Checkout untuk membayar.
-5. Setelah bayar, **DOKU** mengirimkan HTTP POST (*Notification/Webhook*) ke endpoint Laravel `/api/doku/webhook`.
-6. **Laravel Webhook Controller** memvalidasi *signature* kiriman DOKU. Jika valid dan sukses, sistem mengubah status booking menjadi `SUCCESS` dan mengurangi `quota` pada tabel `events`.
+## 3. Alur Pengujian Pembayaran Kartu di Sandbox
+1. **User** mengisi form data diri (Nama, Email, No HP, Jumlah Tiket) di web lokal Laravel Anda.
+2. **Laravel Backend** membuat data pesanan berstatus `PENDING` di MySQL, lalu meminta `snap_token` ke API Midtrans Sandbox.
+3. **Frontend** memunculkan pop-up Midtrans Snap. User memilih opsi pembayaran **"Credit Card / Kartu Kredit"**.
+4. **User** memasukkan **Nomor Kartu Tes Midtrans** (misal kartu sukses: `4811 1111 1111 1111`) beserta CVV dan Expiry Date dummy.
+5. Pop-up Midtrans akan menampilkan simulasi halaman **3D Secure (OTP)**. User cukup klik tombol **"OK / Authorize"**.
+6. Server Midtrans Sandbox mengirim notifikasi webhook ke Laravel (memerlukan bantuan Ngrok).
+7. **Laravel** memproses notifikasi tersebut, jika sukses maka status di database diubah menjadi `SUCCESS` dan kuota event dikurangi.
 
 ---
 
-## 4. Spesifikasi Database (MySQL Schema - Laravel Migration)
-
-Aplikasi ini hanya membutuhkan dua tabel utama yang saling berelasi:
+## 4. Spesifikasi Database (MySQL Schema)
 
 ### 4.1. Tabel `events` (Migration: `create_events_table`)
 | Nama Kolom | Tipe Data | Atribut | Deskripsi |
 | :--- | :--- | :--- | :--- |
 | `id` | BigInteger | PK, Auto Increment | ID unik acara |
 | `title` | String | - | Judul/Nama acara |
-| `image_url` | String | Nullable | Path/URL poster acara |
-| `date_time` | DateTime | - | Waktu pelaksanaan acara |
-| `location` | String | - | Lokasi/Venue |
-| `price` | UnsignedInteger | - | Harga tiket per lembar |
+| `price` | UnsignedInteger | - | Harga tiket per lembar (dalam IDR) |
 | `quota` | UnsignedInteger | - | Sisa kuota tiket yang tersedia |
 | `timestamps` | Timestamp | - | `created_at` & `updated_at` |
 
 ### 4.2. Tabel `bookings` (Migration: `create_bookings_table`)
 | Nama Kolom | Tipe Data | Atribut | Deskripsi |
 | :--- | :--- | :--- | :--- |
-| `id` | BigInteger | PK, Auto Increment | ID unik internal aplikasi |
-| `invoice_number`| String | Unique | Nomor invoice (contoh: `INV-YmdHis`) |
-| `doku_trans_id` | String | Nullable | ID transaksi resmi dari pihak DOKU |
-| `event_id` | BigInteger | FK (References `id` on `events`) | Relasi ke acara yang dibeli |
+| `id` | BigInteger | PK, Auto Increment | ID unik internal |
+| `order_id` | String | Unique | ID Pesanan unik (misal: `ORDER-YmdHis`) |
+| `snap_token` | String | Nullable | Token dari Midtrans untuk memicu Pop-up |
+| `event_id` | BigInteger | FK (References `id` on `events`) | Relasi ke tabel `events` |
 | `customer_name` | String | - | Nama lengkap pembeli |
 | `customer_email`| String | - | Alamat email pembeli |
 | `customer_phone`| String | - | Nomor WhatsApp pembeli |
 | `ticket_qty` | UnsignedInteger | - | Jumlah tiket yang dibeli |
 | `total_price` | UnsignedInteger | - | Hasil perkalian `price` $\times$ `ticket_qty` |
-| `status` | Enum | `['PENDING', 'SUCCESS', 'FAILED']` | Status pembayaran (Default: `PENDING`) |
+| `status` | Enum | `['PENDING', 'SUCCESS', 'FAILED', 'EXPIRED']` | Status Pembayaran |
 | `timestamps` | Timestamp | - | `created_at` & `updated_at` |
 
 ---
 
-## 5. Implementasi Teknis & Routing (Laravel)
+## 5. Konfigurasi Lingkungan Kerja (.env)
 
-### 5.1. Route Configuration (`routes/web.php` & `routes/api.php`)
-* `GET /` : Menampilkan katalog event (mengambil data dari model `Event`).
-* `POST /checkout` : Memproses form pembelian, hit API DOKU, dan redirect ke DOKU.
-* `GET /checkout/success` : Halaman *landing* setelah user selesai membayar di portal DOKU.
-* `POST /api/doku/webhook` : Endpoint khusus (API) untuk menerima notifikasi asinkronus dari DOKU *(Catatan: Route ini wajib dikecualikan dari proteksi CSRF di `bootstrap/app.php` atau `VerifyCsrfToken` middleware)*.
-
-### 5.2. Kebutuhan Konfigurasi `.env`
-Masukkan kredensial Sandbox dari dashboard DOKU ke file `.env` Laravel Anda:
+Buka dashboard Midtrans Anda, pastikan posisinya di **Sandbox Mode** (bukan Production), lalu ambil *Access Keys* di menu *Settings*. Masukkan ke `.env` Laravel:
 
 ```env
 DB_CONNECTION=mysql
@@ -80,6 +66,9 @@ DB_DATABASE=ticketing_dummy
 DB_USERNAME=root
 DB_PASSWORD=
 
-DOKU_CLIENT_ID=Ganti_Dengan_Client_Id_Sandbox_Anda
-DOKU_SECRET_KEY=Ganti_Dengan_Secret_Key_Sandbox_Anda
-DOKU_API_URL=[https://api-sandbox.doku.com](https://api-sandbox.doku.com)
+# Kredensial Midtrans Sandbox Anda
+MIDTRANS_SERVER_KEY=SB-Mid-server-ZlhGx2xjOIwJei3kbeZYnCbN
+MIDTRANS_CLIENT_KEY=SB-Mid-client-Wp-yeWnfa13pzTiB
+MIDTRANS_IS_PRODUCTION=false
+MIDTRANS_IS_SANITIZED=true
+MIDTRANS_IS_3DS=true
