@@ -67,8 +67,3 @@ DB_USERNAME=root
 DB_PASSWORD=
 
 # Kredensial Midtrans Sandbox Anda
-MIDTRANS_SERVER_KEY=SB-Mid-server-ZlhGx2xjOIwJei3kbeZYnCbN
-MIDTRANS_CLIENT_KEY=SB-Mid-client-Wp-yeWnfa13pzTiB
-MIDTRANS_IS_PRODUCTION=false
-MIDTRANS_IS_SANITIZED=true
-MIDTRANS_IS_3DS=true
